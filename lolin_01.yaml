@@ -1,12 +1,12 @@
 substitutions:
-  hostname: 'eredes'
-  dev: 'eredes'
-  name: 'eredes'
+  dev: EB1
+  name: edpbox1
+  hostname: edpbox1
   
 esphome:
-  name: "${hostname}"
-  platform: ESP8266
-  board: nodemcuv2
+  name: "${name}"
+  platform: ESP32
+  board: esp32dev
   on_boot:
     priority: -500
     then:
@@ -20,28 +20,27 @@ interval:
               id(edpbox).update();
           }
 wifi:
-  ssid: !secret wifissid
-  password: !secret wifipass
-  domain: .local
+  ssid: !secret wifi_ssid
+  password: !secret wifi_key
+
   ap:
-    ssid: "${hostname}"
+    ssid: "eb1"
 
 #logger:
 #  baud_rate: 0
 #  level: VERBOSE
 
-#web_server:
+web_server:
 
 api:
   reboot_timeout: 0s
-  password: !secret apipass
+  password: !secret api_key
 ota:
-  safe_mode: True
-  password: !secret otapass
+  password: !secret ota_key
 
 switch:
   - platform: restart
-    name: "${hostname} restart"
+    name: "${name} restart"
   - platform: template
     name: "${dev} ESP Polling"
     id: "edpbox_polling"
@@ -49,10 +48,10 @@ switch:
 # Sensors bellow
 text_sensor:
   - platform: version
-    name: "${hostname} version"
+    name: "${name} version"
 binary_sensor:
   - platform: status
-    name: "${hostname} Status"
+    name: "${name} Status"
 sensor:
   - platform: wifi_signal
     name: "${hostname} WiFi Signal"
@@ -74,8 +73,8 @@ sensor:
     icon: mdi:chip
 uart:
   id: modbus_serial
-  tx_pin: GPIO1
-  rx_pin: GPIO3
+  tx_pin: 17
+  rx_pin: 18
   baud_rate: 9600
   stop_bits: 1
   data_bits: 8
